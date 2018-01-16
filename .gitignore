@@ -1,6 +1,6 @@
 
 # Anything in the bin directory
-./bin/*
+./bin
 
 ### C++ ###
 # Prerequisites
