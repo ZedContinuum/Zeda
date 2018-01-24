@@ -2,12 +2,10 @@
 
 gz::gz(int chunksize) {
   CHUNKSIZE = chunksize;
-  tempBuffer = new char[CHUNKSIZE];
   std::cout << "Chunksize: " << CHUNKSIZE << std::endl;
 }
 
 gz::~gz() {
-  delete tempBuffer;
 }
 
 int gz::Compress() {

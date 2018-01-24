@@ -1,0 +1,50 @@
+#!/bin/sh
+
+build() {
+    if [ "$ZEDASOURCE" == "" ]; then
+	echo "ZEDASOURCE = $ZEDASOURCE"
+	exit 1
+    fi
+
+    SOURCE="$(find . -name '*.cpp' -printf './%P ')"
+    FLAGS="-std=c11 -march=native -w -O3 -c"
+    INCLUDES="-I$ZEDASOURCE/include"
+    LINKS="-lz"
+    OUTPUT="$(basename $PWD).a"
+
+    echo ""
+    echo "Building $OUTPUT..."
+    echo "g++ $FLAGS $SOURCE $INCLUDES $LINKS"
+    g++ $FLAGS $SOURCE $INCLUDES $LINKS
+    if [ "$?" != 0 ]; then
+	echo "Compilation failed for $OUTPUT"
+	exit $?
+    fi
+    echo "Linking $OUTPUT..."
+    ##Sanity check to ensure that the output is there...
+    mkdir -p "$ZEDASOURCE/bin/lib"
+    echo "ar rsv $ZEDASOURCE/bin/lib/$OUTPUT $(find . -name '*.o' -printf './%P ')"
+    ar rsv "$ZEDASOURCE/bin/lib/$OUTPUT" $(find . -name '*.o' -printf './%P ')
+    if [ "$?" != 0 ]; then
+	echo "Linking failed for $OUTPUT"
+	exit $?
+    fi
+}
+
+clean() {
+    echo "Cleaning: $(basename $PWD)"
+    rm -rvf $(find . -name '*.o' -printf './%P ')
+    rm -rvf "$ZEDASOURCE/bin/lib/$(basename $PWD).a"
+}
+
+case "$1" in
+    "build")
+	build
+	;;
+    "clean")
+	clean
+	;;
+    *)
+	exit 1;
+	;;
+esac

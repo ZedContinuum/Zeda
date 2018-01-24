@@ -13,7 +13,7 @@
 #include "libconf/conf.h"
 
 static int LC_MB(int MB) {
-  return MB * 1024;
+  return MB * 1000000;
 }
 
 static std::string LC_GetError(int error) {
